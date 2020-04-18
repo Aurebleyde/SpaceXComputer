@@ -52,8 +52,8 @@ namespace SpaceXComputer
             connectionFirstStage = connectionFirstStageLink;
         }
 
-        public double VHour = 14;
-        public double VMinute = 09;
+        public double VHour = 00;
+        public double VMinute = 18;
         public double VSecond = 30;
 
         protected double InitLat; //LZ-1

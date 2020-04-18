@@ -246,11 +246,11 @@ namespace SpaceXComputer
                 }
             }
 
-            //Falcon9.F9Startup(connection, connectionFirstStageLink);
+            Falcon9.F9Startup(connection, connectionFirstStageLink);
             /*Thread Abort = new Thread(FlightAbort);
             Abort.Start();*/
 
-            /*while (firstStage.firstStage.Flight(null).SurfaceAltitude < 100)
+            while (firstStage.firstStage.Flight(null).SurfaceAltitude < 100)
             {
                 Thread.Sleep(100);
             }
@@ -327,11 +327,11 @@ namespace SpaceXComputer
             firstStage.ConnectionF91stStage(connection);
             Thread Boostback = new Thread(firstStage.boostbackStart);
             //Boostback.Start();
-            /*secondStage.SecondStageStartup();
+            secondStage.SecondStageStartup();
             Thread FairingSep = new Thread(secondStage.fairingSep);
             FairingSep.Start();
             secondStage.SECO(vessel, connection);
-            secondStage.satSep();*/
+            secondStage.satSep();
 
             Console.WriteLine("Stop ?");
             while (Console.ReadLine() != "stop")
@@ -401,7 +401,7 @@ namespace SpaceXComputer
                 //var percentage = (33.5 * (9336.4 * 3 + 4668.2)) / 100;
                 firstStage.firstStage.Control.Throttle = 1;
 
-                if (firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed > 1600 /*RTLS = > 1600 | ASDS = > 2050*/ /*firstStage.firstStage.Thrust < 50*/)
+                if (firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed > 2500 /*RTLS = > 1600 | ASDS = > 2050*/ /*firstStage.firstStage.Thrust < 50*/)
                 {
                     Console.WriteLine("FALCON 9 : MECO.");
                     firstStage.firstStage.Control.Throttle = 0;
