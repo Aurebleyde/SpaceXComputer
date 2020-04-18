@@ -74,11 +74,11 @@ namespace SpaceXComputer
                 }
             }
 
-            //Falcon9.F9Startup(connection, connectionFirstStageLink);
+            Falcon9.F9Startup(connection, connectionFirstStageLink);
             /*Thread Abort = new Thread(FlightAbort);
             Abort.Start();*/
 
-            /*while (firstStage.firstStage.Flight(null).SurfaceAltitude < 100)
+            while (firstStage.firstStage.Flight(null).SurfaceAltitude < 100)
             {
                 Thread.Sleep(100);
             }
@@ -154,42 +154,12 @@ namespace SpaceXComputer
             //connectionFirstStage = new Connection(address: IPAddress.Parse("192.168.1.88"), rpcPort: 50000, streamPort: 50001);
             firstStage.ConnectionF91stStage(connection);
             Thread Boostback = new Thread(firstStage.boostbackStart);
-            Boostback.Start();
-            /*secondStage.SecondStageStartup();
+            //Boostback.Start();
+            secondStage.SecondStageStartup();
             Thread FairingSep = new Thread(secondStage.fairingSep);
             FairingSep.Start();
             secondStage.SECO(vessel, connection);
             secondStage.satSep();
-            
-
-            /*satTarget = new F9SecondStage(vessel, RocketBody.SATTARGET);
-            foreach (Vessel vesselTarget in connection.SpaceCenter().Vessels)
-            {
-                if (vesselTarget.Name.Equals("Polar Constellation 1") && vesselTarget.Type.Equals(VesselType.Relay))
-                {
-                    secondStage.satTarget = vesselTarget;
-                    Console.WriteLine("SECOND STAGE : Sat target accisition signal.");
-                    break;
-                }
-            }*/
-            /*secondStage.circularisation(vessel, connection);
-
-            if (Startup.GetInstance().GetFlightInfo().getGrap() == true)
-            { secondStage.grapSep(); }
-            else
-            {
-                if (Startup.GetInstance().GetFlightInfo().getStarlink() == true)
-                { secondStage.StarlinkSep(); }
-                else
-                { secondStage.satSep(); }
-            }
-
-            if (Startup.GetInstance().GetFlightInfo().getDragon() == true)
-            {
-                var krpc = connection.KRPC();
-                var spaceCenter = connection.SpaceCenter();
-                dragonFlightEvent = new DragonEvent(spaceCenter.ActiveVessel, connection);
-            }*/
 
             Console.WriteLine("Stop ?");
             while (Console.ReadLine() != "stop")
@@ -236,30 +206,6 @@ namespace SpaceXComputer
                 float dif2 = Convert.ToSingle(dif);
                 pit = 90 - dif2;
                 firstStage.firstStage.AutoPilot.TargetPitch = pit;
-
-                if (TWR == 0)
-                {
-                    firstStage.firstStage.AutoPilot.TargetPitch = 90;
-                    break;
-                }
-            }
-
-            firstStage.firstStage.AutoPilot.TargetPitch = 30;
-        }
-
-        public void gravityTurn2()
-        {
-            var pit = 90f;
-
-            while (pit > 35 && firstStage.firstStage.Orbit.ApoapsisAltitude < 120000)
-            {
-                pit = Convert.ToSingle(90 - (Math.Sqrt(firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).SurfaceAltitude) / 5));
-                firstStage.firstStage.AutoPilot.TargetPitch = pit;
-
-                firstStage.firstStage.AutoPilot.TargetRoll = 0;
-                var Ft = firstStage.firstStage.Thrust;
-                var Fw = firstStage.firstStage.Mass * firstStage.firstStage.Orbit.Body.SurfaceGravity;
-                var TWR = Ft / Fw;
 
                 if (TWR == 0)
                 {
