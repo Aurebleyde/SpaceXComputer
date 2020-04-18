@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Drawing;
 using System.Threading;
 using System.Net;
 using KRPC.Client;
 using KRPC.Client.Services.KRPC;
 using KRPC.Client.Services.SpaceCenter;
+using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace SpaceXComputer
 {
@@ -18,8 +20,15 @@ namespace SpaceXComputer
         protected F9SecondStage secondStage;
         protected F9FirstStage droneShip;
         protected F9SecondStage satTarget;
+        protected 
         Event dragonFlightEvent;
 
+        [STAThread]
+        private static void LoadSupervisor()
+        {
+            Application.EnableVisualStyles();
+            Application.Run(new FalconSupervisor());
+        }
 
         public Falcon9Event(Vessel vessel, Connection connectionLink, Connection connectionFirstStageLink)
         {
@@ -31,6 +40,26 @@ namespace SpaceXComputer
             Console.WriteLine("Second Stage accisition signal.");
 
             Console.WriteLine("First Stage accisition signal.");
+
+            Console.WriteLine("Loading...");
+            Task.Run(LoadSupervisor);
+            while (FalconSupervisor.Instance == null) { Thread.Sleep(30); }
+            Console.WriteLine("Loaded !");
+
+            Task.Run(() => { 
+                
+                while(true)
+                {
+                    FalconSupervisor.Execute(() =>
+                    {
+                        FalconSupervisor.Instance.lb_Debug.Text = "Speed : " + Math.Round(firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed).ToString();
+                        Console.WriteLine("Debug Changed");
+                    });
+
+                    Thread.Sleep(100);
+                }
+
+            });
 
             //Thread.Sleep(5000);
 
@@ -74,11 +103,11 @@ namespace SpaceXComputer
                 }
             }
 
-            Falcon9.F9Startup(connection, connectionFirstStageLink);
+            //Falcon9.F9Startup(connection, connectionFirstStageLink);
             /*Thread Abort = new Thread(FlightAbort);
             Abort.Start();*/
 
-            while (firstStage.firstStage.Flight(null).SurfaceAltitude < 100)
+            /*while (firstStage.firstStage.Flight(null).SurfaceAltitude < 100)
             {
                 Thread.Sleep(100);
             }
@@ -155,11 +184,11 @@ namespace SpaceXComputer
             firstStage.ConnectionF91stStage(connection);
             Thread Boostback = new Thread(firstStage.boostbackStart);
             //Boostback.Start();
-            secondStage.SecondStageStartup();
+            /*secondStage.SecondStageStartup();
             Thread FairingSep = new Thread(secondStage.fairingSep);
             FairingSep.Start();
             secondStage.SECO(vessel, connection);
-            secondStage.satSep();
+            secondStage.satSep();*/
 
             Console.WriteLine("Stop ?");
             while (Console.ReadLine() != "stop")
@@ -202,7 +231,7 @@ namespace SpaceXComputer
                 TWR = Ft / Fw;
 
                 var difSup = ((90 * TWR) / TWRstart);
-                double dif = (difSup - 90) / 1.8; //1.8 ASDS //2.9 RTLS
+                double dif = (difSup - 90) / 2.9; //1.8 ASDS //2.9 RTLS
                 float dif2 = Convert.ToSingle(dif);
                 pit = 90 - dif2;
                 firstStage.firstStage.AutoPilot.TargetPitch = pit;
@@ -229,7 +258,7 @@ namespace SpaceXComputer
                 //var percentage = (33.5 * (9336.4 * 3 + 4668.2)) / 100;
                 firstStage.firstStage.Control.Throttle = 1;
 
-                if (firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed > 2050 /*RTLS = > 1600 | ASDS = > 2050*/ /*firstStage.firstStage.Thrust < 50*/)
+                if (firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed > 1600 /*RTLS = > 1600 | ASDS = > 2050*/ /*firstStage.firstStage.Thrust < 50*/)
                 {
                     Console.WriteLine("FALCON 9 : MECO.");
                     firstStage.firstStage.Control.Throttle = 0;

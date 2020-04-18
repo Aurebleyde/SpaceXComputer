@@ -85,7 +85,7 @@ namespace SpaceXComputer
         {
             while (true)
             {
-                secondStage.AutoPilot.TargetPitch = 25;
+                secondStage.AutoPilot.TargetPitch = 35;
                 secondStage.Control.Throttle = 1;
                 if (secondStage.Orbit.ApoapsisAltitude >= Startup.GetInstance().GetFlightInfo().getPeriapsisTarget())
                 {

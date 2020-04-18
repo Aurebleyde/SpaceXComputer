@@ -52,15 +52,15 @@ namespace SpaceXComputer
             connectionFirstStage = connectionFirstStageLink;
         }
 
-        public double VHour = 21;
-        public double VMinute = 45;
+        public double VHour = 14;
+        public double VMinute = 09;
         public double VSecond = 30;
 
-        protected double InitLat = 28.49289896; //LZ-1
-        protected double InitLon = -80.51653638;
-        //protected double InitAlt = 47.6120;
+        protected double InitLat; //LZ-1
+        protected double InitLon;
+        protected double InitAlt;
 
-        protected double InitAlt = 49; //OCISLY
+        //protected double InitAlt = 49; //OCISLY
 
         public void F9Startup(Connection connectionLink, Connection connectionFirstStageLink)
         {
@@ -221,11 +221,14 @@ namespace SpaceXComputer
 
             Console.WriteLine("Communication done with the first stage.");
 
+            InitLat = landingZonePosition().Item1;
+            InitLon = landingZonePosition().Item2;
+
             firstStage.Control.Forward = -1;
             Thread.Sleep(10000);
             firstStage.Control.Forward = 0;
 
-            //boostbackBurn(firstStage, connectionFirstStage);
+            boostbackBurn(firstStage, connectionFirstStage);
             EntryBurn = true;
 
             firstStage.AutoPilot.Disengage();
@@ -366,19 +369,19 @@ namespace SpaceXComputer
                 }
 
                 double verticalSpeed = firstStage.Flight(firstStage.SurfaceReferenceFrame).TrueAirSpeed;
-                if (verticalSpeed < -450)
+                if (verticalSpeed > 420)
                 {
-                    verticalSpeed = -450;
+                    verticalSpeed = 420;
                 }
 
-                double trueRadar = firstStage.Flight(firstStage.SurfaceReferenceFrame).SurfaceAltitude - landedAltitude + 15;
+                double trueRadar = firstStage.Flight(firstStage.SurfaceReferenceFrame).SurfaceAltitude - landedAltitude - 30; //15
 
                 double g = 9.81;
                 double maxDecelCentral = ((firstStage.Parts.WithTag("MainCentral")[0].Engine.AvailableThrust) / firstStage.Mass) - g;
                 double stopDistCentral = Math.Pow(Math.Abs(verticalSpeed), 2) / (2 * maxDecelCentral);
                 double impactTime = trueRadar / Math.Abs(verticalSpeed);
 
-                if (trueRadar /*- ((1 * trueRadar) / 100)*/ - (firstStage.Flight(firstStage.SurfaceReferenceFrame).TrueAirSpeed * 1.75) <= stopDistCentral && suicideBurnText == false)
+                if (trueRadar /*- ((1 * trueRadar) / 100)*/ - (firstStage.Flight(firstStage.SurfaceReferenceFrame).TrueAirSpeed * 1.25) <= stopDistCentral && suicideBurnText == false)
                 {
                     Console.WriteLine("FIRST STAGE : Landing Burn started.");
                     suicideBurnText = true;
@@ -512,7 +515,7 @@ namespace SpaceXComputer
 
         public float circleDistance()
         {
-            Tuple<double, double> p1 = landingZonePosition();     //...this point...
+            Tuple<double, double> p1 = Tuple.Create(landingZonePosition().Item1, landingZonePosition().Item2);     //...this point...
             Tuple<double, double> p2 = Tuple.Create(firstStage.Flight(null).Latitude, firstStage.Flight(null).Longitude);     //...to this point...
             double radius = firstStage.Orbit.Body.EquatorialRadius + firstStage.Flight(firstStage.SurfaceReferenceFrame).SurfaceAltitude; //...around a body of this radius. (note: if you are flying you may want to use ship:body:radius + altitude).
             double A = Math.Pow(Math.Pow(Math.Sin((p1.Item1 - p2.Item1) / 2), 2) + Math.Cos(p1.Item1) * Math.Cos(p2.Item1) * Math.Sin((p1.Item2 - p2.Item2) / 2), 2);
@@ -520,34 +523,39 @@ namespace SpaceXComputer
             return Convert.ToSingle(radius * Math.PI * Math.Atan2(Math.Sqrt(A), Math.Sqrt(1 - A)) / 90);
         }
 
-        public Tuple<Double, Double> landingZonePosition()
+        public Tuple<Double, Double, Double> landingZonePosition()
         {
             if (Startup.GetInstance().GetFlightInfo().getLZ() == "LZ-1")
             {
-                var landingZonePosition = Tuple.Create(Convert.ToDouble(28.49289896), Convert.ToDouble(-80.51653638));
+                var landingZonePosition = Tuple.Create(Convert.ToDouble(28.49289896), Convert.ToDouble(-80.51653638), Convert.ToDouble(47.6120));
+                return landingZonePosition;
+            }
+            else if (Startup.GetInstance().GetFlightInfo().getLZ() == "LZ-2")
+            {
+                var landingZonePosition = Tuple.Create(Convert.ToDouble(28.493734), Convert.ToDouble(-80.519386), Convert.ToDouble(47.6120));
                 return landingZonePosition;
             }
             else if (Startup.GetInstance().GetFlightInfo().getLZ() == "OCISLY")
             {
-                var landingZonePosition = Tuple.Create(droneShip.Flight(droneShip.SurfaceReferenceFrame).Latitude, droneShip.Flight(droneShip.SurfaceReferenceFrame).Longitude);
+                var landingZonePosition = Tuple.Create(droneShip.Flight(droneShip.SurfaceReferenceFrame).Latitude, droneShip.Flight(droneShip.SurfaceReferenceFrame).Longitude, droneShip.Flight(droneShip.SurfaceReferenceFrame).SurfaceAltitude + 5);
                 return landingZonePosition;
                 //return null;
             }
             else if (Startup.GetInstance().GetFlightInfo().getLZ() == "LZ-4")
             {
-                var landingZonePosition = Tuple.Create(Convert.ToDouble(34.7362686474572), Convert.ToDouble(-120.278871365682));
+                var landingZonePosition = Tuple.Create(Convert.ToDouble(34.7362686474572), Convert.ToDouble(-120.278871365682), Convert.ToDouble(47.6120));
                 return landingZonePosition;
             }
             else if (Startup.GetInstance().GetFlightInfo().getLZ() == "FHLZ")
             {
-                var landingZonePosition = Tuple.Create(0.0,0.0);
+                var landingZonePosition = Tuple.Create(0.0, 0.0, 0.0);
                 if (rocketBody == RocketBody.FH_SIDEBOOSTER_A) //LZ-1
                 {
-                    landingZonePosition = Tuple.Create(Convert.ToDouble(26.8058981888411), Convert.ToDouble(-80.5380493910099));
+                    landingZonePosition = Tuple.Create(Convert.ToDouble(28.49289896), Convert.ToDouble(-80.51653638), Convert.ToDouble(47.6120));
                 }
                 else if (rocketBody == RocketBody.FH_SIDEBOOSTER_B) //LZ-2
                 {
-                    landingZonePosition = Tuple.Create(Convert.ToDouble(26.8400145977634), Convert.ToDouble(-80.5606280072286));
+                    landingZonePosition = Tuple.Create(Convert.ToDouble(28.493734), Convert.ToDouble(-80.519386), Convert.ToDouble(47.6120));
                 }
                 return landingZonePosition;
             }

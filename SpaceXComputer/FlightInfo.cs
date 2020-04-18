@@ -30,7 +30,7 @@ namespace SpaceXComputer
         protected Double apoapsisTarget = 35786000;
         protected Double periapsisTarget = 600000;
         protected String landing = "RTLS"; //RTLS for LZ and ASDS for drone ship
-        protected String LZ = "LZ-1"; //LZ-1/LZ-2/LZ-4/OCISLY/FHLZ/FHOCISLY
+        protected String LZ = "LZ-2"; //LZ-1/LZ-2/LZ-4/OCISLY/FHLZ/FHOCISLY
 
         //protected Double semiMajorAxis = ((Startup.GetInstance().GetFlightInfo().getApoapsisTarget() + 600000) + (Startup.GetInstance().GetFlightInfo().getPeriapsisTarget() + 600000)) / 2;
         protected Double dragonCargoApoapsisTarget = 900000;

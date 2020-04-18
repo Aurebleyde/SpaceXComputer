@@ -22,7 +22,7 @@ namespace SpaceXComputer
 
             firstStage.firstStage = connection.SpaceCenter().ActiveVessel;
 
-            firstStage.landingBurn2(connection);
+            //firstStage.landingBurn2(connection);
         }
     }
 }
