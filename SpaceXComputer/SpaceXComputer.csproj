@@ -77,6 +77,11 @@
     <Compile Include="Carbon II\C2ThirdStage.cs" />
     <Compile Include="Carbon II\Carbon2Event.cs" />
     <Compile Include="Carbon II\Carbon2HopperEvent.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SpaceX\Dragon\Commands\Command.cs" />
     <Compile Include="SpaceX\Dragon\Commands\CommandFire.cs" />
     <Compile Include="SpaceX\Dragon\Commands\RegisterCommand.cs" />
@@ -130,6 +135,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SpaceX\Falcon 9\FalconSupervisor.resx">
       <DependentUpon>FalconSupervisor.cs</DependentUpon>
     </EmbeddedResource>

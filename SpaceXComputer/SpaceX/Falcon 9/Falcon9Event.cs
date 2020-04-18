@@ -43,20 +43,163 @@ namespace SpaceXComputer
 
             Console.WriteLine("Loading...");
             Task.Run(LoadSupervisor);
-            while (FalconSupervisor.Instance == null) { Thread.Sleep(30); }
+            while (FalconSupervisor.Instance == null) { Thread.Sleep(1000); }
             Console.WriteLine("Loaded !");
 
             Task.Run(() => { 
-                
+
                 while(true)
                 {
                     FalconSupervisor.Execute(() =>
                     {
-                        FalconSupervisor.Instance.lb_Debug.Text = "Speed : " + Math.Round(firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed).ToString();
-                        Console.WriteLine("Debug Changed");
+                        try
+                        {
+                            #region FirstStageThrust
+                            FalconSupervisor.Instance.lb_PowerCentral.Text = Math.Round(firstStage.firstStage.Parts.WithTag("MainCentral")[0].Engine.Thrust).ToString() + "kN";
+                            FalconSupervisor.Instance.lb_PowerSecond1.Text = Math.Round(firstStage.firstStage.Parts.WithTag("MainSecond")[1].Engine.Thrust).ToString() + "kN";
+                            FalconSupervisor.Instance.lb_PowerSecond0.Text = Math.Round(firstStage.firstStage.Parts.WithTag("MainSecond")[0].Engine.Thrust).ToString() + "kN";
+                            FalconSupervisor.Instance.lb_PowerMain1.Text = Math.Round(firstStage.firstStage.Parts.WithTag("Main")[1].Engine.Thrust).ToString() + "kN";
+                            FalconSupervisor.Instance.lb_PowerMain2.Text = Math.Round(firstStage.firstStage.Parts.WithTag("Main")[2].Engine.Thrust).ToString() + "kN";
+                            FalconSupervisor.Instance.lb_PowerMain3.Text = Math.Round(firstStage.firstStage.Parts.WithTag("Main")[3].Engine.Thrust).ToString() + "kN";
+                            FalconSupervisor.Instance.lb_PowerMain4.Text = Math.Round(firstStage.firstStage.Parts.WithTag("Main")[4].Engine.Thrust).ToString() + "kN";
+                            FalconSupervisor.Instance.lb_PowerMain5.Text = Math.Round(firstStage.firstStage.Parts.WithTag("Main")[5].Engine.Thrust).ToString() + "kN";
+                            FalconSupervisor.Instance.lb_PowerMain0.Text = Math.Round(firstStage.firstStage.Parts.WithTag("Main")[0].Engine.Thrust).ToString() + "kN";
+                            #endregion
+
+                            #region CenterEngine
+                            if (firstStage.firstStage.Parts.WithTag("MainCentral")[0].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("MainCentral")[0].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_CenterEngine.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("MainCentral")[0].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("MainCentral")[0].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_CenterEngine.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_CenterEngine.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+                            #endregion
+
+                            #region SecondsEngines
+                            if (firstStage.firstStage.Parts.WithTag("MainSecond")[0].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("MainSecond")[0].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Second0.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("MainSecond")[0].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("MainSecond")[0].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Second0.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_Second0.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+
+                            if (firstStage.firstStage.Parts.WithTag("MainSecond")[1].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("MainSecond")[1].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Second1.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("MainSecond")[1].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("MainSecond")[1].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Second1.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_Second1.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+                            #endregion
+
+                            #region MainEngines
+                            if (firstStage.firstStage.Parts.WithTag("Main")[0].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[0].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main0.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("Main")[0].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[0].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main0.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_Main0.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+
+                            if (firstStage.firstStage.Parts.WithTag("Main")[1].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[1].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main1.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("Main")[1].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[1].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main1.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_Main1.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+
+                            if (firstStage.firstStage.Parts.WithTag("Main")[2].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[2].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main2.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("Main")[2].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[2].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main2.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_Main2.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+
+                            if (firstStage.firstStage.Parts.WithTag("Main")[3].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[3].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main3.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("Main")[3].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[3].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main3.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_Main3.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+
+                            if (firstStage.firstStage.Parts.WithTag("Main")[4].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[4].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main4.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("Main")[4].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[4].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main4.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_Main4.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+
+                            if (firstStage.firstStage.Parts.WithTag("Main")[5].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[5].Engine.Thrust < 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main5.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Yellow.png");
+                            }
+                            else if (firstStage.firstStage.Parts.WithTag("Main")[5].Engine.Thrust > 0 && firstStage.firstStage.Parts.WithTag("Main")[5].Engine.Thrust >= 700000)
+                            {
+                                FalconSupervisor.Instance.pb_Main5.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Green.png");
+                            }
+                            else
+                            {
+                                FalconSupervisor.Instance.pb_Main5.Image = Image.FromFile("C:/Users/Utilisateur/Documents/SpaceX Computer/SpaceXComputer/SpaceXComputer/SpaceX/Falcon 9/Engine-Red.png");
+                            }
+                            #endregion
+
+
+
+                            FalconSupervisor.Instance.lb_Debug.Text = "Speed : " + Math.Round(firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed).ToString();
+                        }
+                        catch
+                        {
+
+                        }
                     });
 
-                    Thread.Sleep(100);
+                    Thread.Sleep(200);
                 }
 
             });
