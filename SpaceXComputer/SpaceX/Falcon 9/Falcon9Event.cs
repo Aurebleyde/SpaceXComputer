@@ -401,7 +401,7 @@ namespace SpaceXComputer
                 //var percentage = (33.5 * (9336.4 * 3 + 4668.2)) / 100;
                 firstStage.firstStage.Control.Throttle = 1;
 
-                if (firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed > 2500 /*RTLS = > 1600 | ASDS = > 2050*/ /*firstStage.firstStage.Thrust < 50*/)
+                if (firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed > 1600 /*RTLS = > 1600 | ASDS = > 2050*/ /*firstStage.firstStage.Thrust < 50*/)
                 {
                     Console.WriteLine("FALCON 9 : MECO.");
                     firstStage.firstStage.Control.Throttle = 0;
