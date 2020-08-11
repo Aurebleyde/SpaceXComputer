@@ -15,14 +15,14 @@ namespace SpaceXComputer
     {
         protected Connection connection;
 
-        protected Starship Starship;
+        protected Starship starship;
 
         public StarshipEvent(Vessel vessel, Connection connectionLink)
         {
             connection = connectionLink;
 
-            Starship = new Starship(vessel, RocketBody.STARSHIP);
-            Starship.Startup(connection);
+            starship = new Starship(vessel, RocketBody.STARSHIP);
+            starship.startup(connection);
         }
     }
 }

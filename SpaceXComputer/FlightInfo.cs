@@ -16,7 +16,7 @@ namespace SpaceXComputer
         protected float remeningHour = 00;
         protected float remeningMinute = 01;
         protected float remeningSecond = 30;
-        protected String Rocket = "F9"; //FH = Falcon Heavy / F9 = Falcon 9 / A5 = Ariane 5 / H2A
+        protected String Rocket = "Starship"; //FH = Falcon Heavy / F9 = Falcon 9 / A5 = Ariane 5 / H2A
         protected Boolean StaticFire = false;
         protected Boolean Grap = false;
         protected Boolean Starlink = false;
@@ -26,9 +26,15 @@ namespace SpaceXComputer
         protected Boolean Orion = false;
         protected Boolean multiPhaseDragon = false;
         protected Boolean Hyperloop = false;
+<<<<<<< Updated upstream
         protected Double maxAltitude = 20000;
         protected Double apoapsisTarget = 35784000;
         protected Double periapsisTarget = 250000;
+=======
+        protected Double maxAltitude = 150;
+        protected Double apoapsisTarget = 35786000;
+        protected Double periapsisTarget = 600000;
+>>>>>>> Stashed changes
         protected String landing = "RTLS"; //RTLS for LZ and ASDS for drone ship
         protected String LZ = "LZ-1"; //LZ-1/LZ-2/LZ-4/OCISLY/FHLZ/FHOCISLY
 

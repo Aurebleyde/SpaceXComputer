@@ -43,7 +43,7 @@ namespace SpaceXComputer
             Thread Log = new Thread(LogDoc);
             //Log.Start();
 
-            Thread.Sleep(2000);
+            Thread.Sleep(200000);
 
             Liftoff();
             while (H2A.Flight(H2A.SurfaceReferenceFrame).MeanAltitude <= 200) { }
