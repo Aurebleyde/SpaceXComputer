@@ -21,6 +21,9 @@ namespace SpaceXComputer
         {
             connection = connectionLink;
 
+
+            /*grassHopper = new GrassHopper(vessel, RocketBody.F9RDev);
+            grassHopper.startup(connection);*/
             f9RDev = new F9RDev(vessel, RocketBody.F9RDev);
             f9RDev.startup(connection);
         }

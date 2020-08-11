@@ -82,7 +82,7 @@ namespace SpaceXComputer
             }
 
             Thread.Sleep(5000);
-            grassHopper.AutoPilot.TargetPitchAndHeading(85, 90);
+            grassHopper.AutoPilot.TargetPitchAndHeading(85.5f, 1568);
 
             while (grassHopper.Flight(grassHopper.SurfaceReferenceFrame).SurfaceAltitude - InitAlt < Startup.GetInstance().GetFlightInfo().getMaxAltitude())
             {
@@ -180,6 +180,8 @@ namespace SpaceXComputer
 
                             //Console.WriteLine("S & W");
                         }
+
+                        Console.WriteLine(("Heading = " + grassHopper.AutoPilot.TargetHeading));
                     }
                 }
                 catch
@@ -213,6 +215,8 @@ namespace SpaceXComputer
                         Total = 90 - Total;
 
                         grassHopper.AutoPilot.TargetPitch = Convert.ToSingle(Total);
+
+                        Console.WriteLine("Pitch = " + grassHopper.AutoPilot.TargetPitch);
                     }
                 }
                 catch
@@ -232,6 +236,8 @@ namespace SpaceXComputer
 
             while (true)
             {
+                AngleLimit = LimitOfAngle(grassHopper.Flight(grassHopper.SurfaceReferenceFrame).SurfaceAltitude - InitAlt, Distance(InitLat, ImpactPos().Item1, InitLon, ImpactPos().Item2));
+
                 if (suicideBurnText == false)
                 {
                     throt = ThrottleToTWR(0.8f);
@@ -247,10 +253,10 @@ namespace SpaceXComputer
 
                 double g = 9.81;
                 double maxDecelCentral = ((grassHopper.Parts.WithTag("MainCentral")[0].Engine.AvailableThrust) / grassHopper.Mass) - g;
-                double stopDistCentral = Math.Pow(Math.Abs(verticalSpeed), 2) / (2 * maxDecelCentral);
+                double stopDistCentral = Math.Pow(Math.Abs(verticalSpeed), 2) / (1 /*2*/ * maxDecelCentral);
                 double impactTime = trueRadar / Math.Abs(verticalSpeed);
 
-                if (trueRadar - ((20 * trueRadar) / 100) - (grassHopper.Flight(grassHopper.SurfaceReferenceFrame).TrueAirSpeed * 7) <= stopDistCentral && suicideBurnText == false)
+                if (trueRadar - ((20 * trueRadar) / 100) - (grassHopper.Flight(grassHopper.SurfaceReferenceFrame).TrueAirSpeed * 5) <= stopDistCentral && suicideBurnText == false)
                 {
                     Console.WriteLine("FIRST STAGE : Landing Burn started.");
                     suicideBurnText = true;
@@ -311,12 +317,17 @@ namespace SpaceXComputer
                     }
                 }
 
+                if (grassHopper.Flight(grassHopper.Orbit.Body.ReferenceFrame).VerticalSpeed > -5)
+                {
+                    throt = ThrottleToTWR(0.9f);
+                }
+
                 if (Math.Abs(impactTime) < 6)
                 {
                     grassHopper.Control.Gear = true;
                 }
 
-                if (grassHopper.Flight(grassHopper.Orbit.Body.ReferenceFrame).VerticalSpeed > 0.01 && suicideBurn == false)
+                if (grassHopper.Flight(grassHopper.Orbit.Body.ReferenceFrame).VerticalSpeed > -0.1 && suicideBurn == false)
                 {
                     grassHopper.Control.Throttle = 0;
                     throt = 0;

@@ -2,9 +2,9 @@
 using KRPC.Client;
 using KRPC.Client.Services.KRPC;
 using KRPC.Client.Services.SpaceCenter;
-using UnityEngine;
-using UnityEngineInternal;
-using Trajectories;
+//using UnityEngine;
+//using UnityEngineInternal;
+//using Trajectories;
 using systemAlias = global::System;
 using Google.Protobuf;
 using KRPC.Client.Services.Trajectories;

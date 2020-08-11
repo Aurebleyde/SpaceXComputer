@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using KRPC.Client;
 using KRPC.Client.Services.KRPC;
 using KRPC.Client.Services.SpaceCenter;
-using UnityEngine;
-using UnityEngineInternal;
-using Trajectories;
+//using UnityEngine;
+//using UnityEngineInternal;
+//using Trajectories;
 using systemAlias = global::System;
 using Google.Protobuf;
 using KRPC.Client.Services.Trajectories;
@@ -33,7 +33,7 @@ namespace SpaceXComputer
         public void FHStartup(Connection connectionLink)
         {
             connection = connectionLink;
-            centerCore.Control.ToggleActionGroup(7);
+            //centerCore.Control.ToggleActionGroup(7);
             centerCore.AutoPilot.Engage();
 
             centerCore.Control.Throttle = 1;
@@ -70,7 +70,7 @@ namespace SpaceXComputer
             Console.WriteLine("FIRST STAGE : Main engine startup.");
             float thrust;
             thrust = centerCore.Parts.Engines[1].Thrust;
-            Thread.Sleep(2000);
+            Thread.Sleep(5500);
 
             thrust = centerCore.Thrust;
             if (thrust < 19400)
@@ -129,8 +129,8 @@ namespace SpaceXComputer
             {
                 foreach (LaunchClamp clamp in centerCore.Parts.LaunchClamps)
                 {
-                    //clamp.Release();
-                    centerCore.Control.ToggleActionGroup(8);
+                    clamp.Release();
+                    //centerCore.Control.ToggleActionGroup(8);
                 }
                 Console.WriteLine("CENTER CORE : Liftoff.");
             }

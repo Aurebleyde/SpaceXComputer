@@ -39,7 +39,7 @@ namespace SpaceXComputer
             GT.Start();
             BECO();
 
-            sideBoosterB = new F9FirstStage(vessel, RocketBody.FH_SIDEBOOSTER_B);
+            sideBoosterA = new F9FirstStage(vessel, RocketBody.FH_SIDEBOOSTER_A);
             foreach (Vessel vesselTargetFirst in connection.SpaceCenter().Vessels)
             {
                 if (vesselTargetFirst.Name.Equals("FH Side Booster B") && vesselTargetFirst.Type.Equals(VesselType.Probe))
@@ -49,7 +49,7 @@ namespace SpaceXComputer
                     Console.WriteLine("FH : SideBoosterB as configured.");
                 }
             }
-            sideBoosterA = new F9FirstStage(vessel, RocketBody.FH_SIDEBOOSTER_A);
+            sideBoosterB = new F9FirstStage(vessel, RocketBody.FH_SIDEBOOSTER_B);
             foreach (Vessel vesselTargetFirst in connection.SpaceCenter().Vessels)
             {
                 if (vesselTargetFirst.Name.Equals("FH Side Booster A") && vesselTargetFirst.Type.Equals(VesselType.Probe))
@@ -90,35 +90,33 @@ namespace SpaceXComputer
 
         public void gravityTurn()
         {
-            centerCore.centerCore.AutoPilot.TargetRoll = 190;
-
+            centerCore.centerCore.AutoPilot.TargetRoll = 90;
             var Ft = centerCore.centerCore.Thrust;
             var Fw = centerCore.centerCore.Mass * centerCore.centerCore.Orbit.Body.SurfaceGravity;
             var TWR = Ft / Fw;
             var TWRstart = TWR;
             var pit = 90f;
 
-            while (pit > 40 || centerCore.centerCore.Orbit.ApoapsisAltitude < 60000)
+            while (pit > 35 && centerCore.centerCore.Orbit.ApoapsisAltitude < 120000)
             {
                 Ft = centerCore.centerCore.Thrust;
                 Fw = centerCore.centerCore.Mass * centerCore.centerCore.Orbit.Body.SurfaceGravity;
                 TWR = Ft / Fw;
 
                 var difSup = ((90 * TWR) / TWRstart);
-                double dif = (difSup - 90) / 1.8;
+                double dif = (difSup - 90) / 3; //1.8 ASDS //2.9 RTLS
                 float dif2 = Convert.ToSingle(dif);
                 pit = 90 - dif2;
                 centerCore.centerCore.AutoPilot.TargetPitch = pit;
 
-                if (centerCore.centerCore.Parts.WithTag("MainCentral")[0].Engine.ThrustLimit > 0.9f)
+                if (TWR == 0)
                 {
-                    Thread.Sleep(7000);
-                    centerCore.centerCore.AutoPilot.TargetPitch = 20;
+                    centerCore.centerCore.AutoPilot.TargetPitch = 90;
                     break;
                 }
             }
 
-            centerCore.centerCore.AutoPilot.TargetPitch = 25;
+            centerCore.centerCore.AutoPilot.TargetPitch = 30;
         }
 
         public void BECO()
@@ -128,15 +126,16 @@ namespace SpaceXComputer
             while (true)
             {
                 thrust = centerCore.centerCore.Thrust;
-                var vesselFuel = (connection.AddStream(() => centerCore.centerCore.Resources.Amount("LiquidFuel")));
+                /*var vesselFuel = (connection.AddStream(() => centerCore.centerCore.Resources.Amount("LiquidFuel")));
                 //RTLS = 30%, ASDS = 20%, Exp = 1%
-                var percentage = (30 * (9336.4 * 3 + 4668.2)) / 100;
+                var percentage = (30 * (9336.4 * 3 + 4668.2)) / 100;*/
                 centerCore.centerCore.Control.Throttle = 1;
 
-                if (vesselFuel.Get()/3 - ((4668.2 + 1167)) <= percentage)
+                if (/*vesselFuel.Get()/3 - ((4668.2 + 1167)) <= percentage*/ centerCore.centerCore.Flight(centerCore.centerCore.SurfaceReferenceFrame).TrueAirSpeed > 1550) //RTLS : 1600
                 {
                     Console.WriteLine("FH : BECO.");
                     centerCore.centerCore.Control.ToggleActionGroup(3);
+
                     centerCore.centerCore.Parts.WithTag("MainCentral")[0].Engine.ThrustLimit = 1;
                     centerCore.centerCore.Parts.WithTag("MainSecond")[0].Engine.ThrustLimit = 1;
                     centerCore.centerCore.Parts.WithTag("MainSecond")[1].Engine.ThrustLimit = 1;
@@ -145,8 +144,8 @@ namespace SpaceXComputer
                         centerCore.centerCore.Parts.WithTag("Main")[i].Engine.ThrustLimit = 1;
                     }
 
-                    Thread.Sleep(1500);
-                    //firstStage.firstStage.Parts.Decouplers[1].Decouple();
+                    Thread.Sleep(500);
+                    //centerCore.centerCore.Parts.Decouplers[1].Decouple();
                     centerCore.centerCore.Control.ToggleActionGroup(6);
                     Console.WriteLine("FH : Boosters separation.");
 

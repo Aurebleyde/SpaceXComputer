@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using KRPC.Client;
 using KRPC.Client.Services.KRPC;
 using KRPC.Client.Services.SpaceCenter;
-using UnityEngine;
-using UnityEngineInternal;
-using Trajectories;
+//using UnityEngine;
+//using UnityEngineInternal;
+//using Trajectories;
 using systemAlias = global::System;
 using Google.Protobuf;
 using KRPC.Client.Services.Trajectories;
@@ -52,8 +52,8 @@ namespace SpaceXComputer
             connectionFirstStage = connectionFirstStageLink;
         }
 
-        public double VHour = 00;
-        public double VMinute = 18;
+        public double VHour = 04;
+        public double VMinute = 02;
         public double VSecond = 30;
 
         protected double InitLat; //LZ-1
@@ -61,6 +61,12 @@ namespace SpaceXComputer
         protected double InitAlt;
 
         //protected double InitAlt = 49; //OCISLY
+
+        private void ControlCorrection()
+        {
+            firstStage.Control.Pitch *= 1.75f;
+            firstStage.Control.Yaw *= 1.75f;
+        }
 
         public void F9Startup(Connection connectionLink, Connection connectionFirstStageLink)
         {
@@ -78,7 +84,7 @@ namespace SpaceXComputer
 
             bool T = false;
 
-            while (T == false)
+            /*while (T == false)
             {
                 double hour = VHour - DateTime.Now.Hour;
                 double minute = VMinute - DateTime.Now.Minute;
@@ -87,7 +93,10 @@ namespace SpaceXComputer
                 second = second + VSecond - 1;
 
                 if (hour <= 0 && minute <= 0 && second <= 7) { T = true; }
-            }
+            }*/
+
+            Thread Corrections = new Thread(ControlCorrection);
+            //Corrections.Start();
 
             Thread Rec = new Thread(FlightRecord);
             //Rec.Start();
@@ -106,9 +115,10 @@ namespace SpaceXComputer
             //var during = 0;
             float thrust;
             thrust = firstStage.Parts.Engines[1].Thrust;
+            firstStage.Control.Throttle = 0.1f;
+            Thread.Sleep(3000);
             firstStage.Control.Throttle = 1;
-            Thread.Sleep(7000);
-            firstStage.Control.Throttle = 1;
+            Thread.Sleep(3000);
             thrust = firstStage.Thrust;
             if ((thrust * 100) / firstStage.AvailableThrust < 50)
             {
@@ -144,11 +154,12 @@ namespace SpaceXComputer
             }
             else
             {
+                firstStage.Control.ToggleActionGroup(6);
                 foreach (LaunchClamp clamp in firstStage.Parts.LaunchClamps)
                 {
                     clamp.Release();
                 }
-                firstStage.Control.ToggleActionGroup(6);
+
                 Console.WriteLine("FIRST STAGE : Liftoff.");
             }
         }
@@ -225,7 +236,7 @@ namespace SpaceXComputer
             InitLon = landingZonePosition().Item2;
 
             firstStage.Control.Forward = -1;
-            Thread.Sleep(10000);
+            Thread.Sleep(100);
             firstStage.Control.Forward = 0;
 
             boostbackBurn(firstStage, connectionFirstStage);
@@ -242,12 +253,15 @@ namespace SpaceXComputer
             firstStage.AutoPilot.Engage();
             firstStage.AutoPilot.TargetRoll = 0;
 
-            Thread.Sleep(4000);
+            firstStage.Control.Pitch = 1;
+            firstStage.Control.Up = 1;
+
+            Thread.Sleep(40);
 
             firstStage.Control.RCS = true;
             firstStage.AutoPilot.Engage();
             
-            firstStage.AutoPilot.TargetPitchAndHeading(0, Startup.GetInstance().GetFlightInfo().getHeadDesorbitation());
+            firstStage.AutoPilot.TargetPitchAndHeading(90, Startup.GetInstance().GetFlightInfo().getHeadDesorbitation());
             try
             {
                 for (int i = 0; i < 6; i++)
@@ -269,17 +283,22 @@ namespace SpaceXComputer
             //firstStage.AutoPilot.AttenuationAngle = 0;
             firstStage.Control.Pitch = 1;
             firstStage.Control.Up = 1;
-            Thread.Sleep(15000);
+            Thread.Sleep(8000); //F9 = 20000 | FH = 5000
             
             firstStage.Control.Up = 0;
             //while (firstStage.AutoPilot.HeadingError > 45) { }
-            Thread.Sleep(10000);
+            Thread.Sleep(1000);
             firstStage.AutoPilot.TargetRoll = 180;
             firstStage.Control.Up = 0;
             firstStage.Control.Pitch = 0;
             firstStage.Control.Forward = 1;
-            Thread.Sleep(4000);
+            Thread.Sleep(400);
             firstStage.Control.Forward = 0;
+            firstStage.Control.Throttle = 0.1f;
+            bool impact = connection.Trajectories().HasImpact();
+            double latLand = firstStage.connection.Trajectories().ImpactPos().Item1;
+            firstStage.AutoPilot.TargetPitchAndHeading(5, Startup.GetInstance().GetFlightInfo().getHeadDesorbitation() - (Convert.ToSingle(latLand) - Convert.ToSingle(landingZonePosition().Item1)));
+            Thread.Sleep(2000);
             firstStage.Control.Throttle = 1;
             //while (firstStage.AutoPilot.PitchError > 30) { /*firstStage.Control.Pitch = 1;*/ }
             /*firstStage.Control.Pitch = 0;
@@ -288,8 +307,6 @@ namespace SpaceXComputer
             firstStage.AutoPilot.Disengage();
             firstStage.AutoPilot.Engage();
 
-            bool impact = connection.Trajectories().HasImpact();
-            double latLand = firstStage.connection.Trajectories().ImpactPos().Item1;
             firstStage.AutoPilot.TargetPitchAndHeading(5, Startup.GetInstance().GetFlightInfo().getHeadDesorbitation() - (Convert.ToSingle(latLand) - Convert.ToSingle(landingZonePosition().Item1)));
 
             Console.WriteLine("FIRST STAGE : Boostback burn started. " + rocketBody);
@@ -299,10 +316,11 @@ namespace SpaceXComputer
             while (connection.Trajectories().ImpactPos().Item2 > landingZonePosition().Item2)
             {
                 firstStage.Control.Throttle = 1;
+                firstStage.AutoPilot.TargetPitchAndHeading(5, Startup.GetInstance().GetFlightInfo().getHeadDesorbitation() - (Convert.ToSingle(latLand) - Convert.ToSingle(landingZonePosition().Item1)));
             }
 
             firstStage.Control.Throttle = 0;
-            Console.WriteLine("FIRST STAGE : Boostback burn shutdown.");
+            Console.WriteLine("FIRST STAGE : Boostback burn shutdown." + rocketBody);
             firstStage.Control.RCS = false;
             firstStage.Control.Brakes = true;
         }
@@ -318,7 +336,7 @@ namespace SpaceXComputer
 
             firstStage.Control.RCS = true;
 
-            while (firstStage.Flight(firstStage.SurfaceReferenceFrame).MeanAltitude >= 60000/* && firstStage.Flight(firstStage.SurfaceReferenceFrame).TrueAirSpeed <= 2200*/) { } //55000 RTLS | 60000 ASDS
+            while (firstStage.Flight(firstStage.SurfaceReferenceFrame).MeanAltitude >= 60000 || firstStage.Flight(firstStage.SurfaceReferenceFrame).TrueAirSpeed <= 1450) { } //70000 FH | 60000 ASDS/RTLS
 
             try
             {
@@ -339,11 +357,11 @@ namespace SpaceXComputer
 
             firstStage.Control.RCS = false;
             firstStage.Control.Throttle = 1;
-            Console.WriteLine("FIRST STAGE : Entry Burn Started.");
+            Console.WriteLine("FIRST STAGE : Entry Burn Started." + rocketBody);
 
             while (firstStage.Flight(firstStage.SurfaceReferenceFrame).TrueAirSpeed >= 350) { }
 
-            Console.WriteLine("FIRST STAGE : Entry Burn Shutdown.");
+            Console.WriteLine("FIRST STAGE : Entry Burn Shutdown." + rocketBody);
             firstStage.Control.RCS = true;
             firstStage.Parts.WithTag("MainCentral")[0].Engine.Active = true;
             firstStage.Parts.WithTag("MainSecond")[0].Engine.Active = true;
@@ -359,7 +377,10 @@ namespace SpaceXComputer
             float throt = ThrottleToTWR(0.0f);
             bool suicideBurn = false;
 
-            double landedAltitude = InitAlt;
+            //double landedAltitude = InitAlt;
+            double landedAltitude = 5;
+
+            while (firstStage.Flight(firstStage.SurfaceReferenceFrame).SurfaceAltitude > 9000)
 
             while (true)
             {
@@ -374,16 +395,16 @@ namespace SpaceXComputer
                     verticalSpeed = 420;
                 }
 
-                double trueRadar = firstStage.Flight(firstStage.SurfaceReferenceFrame).SurfaceAltitude - landedAltitude - 30; //15
+                double trueRadar = firstStage.Flight(firstStage.SurfaceReferenceFrame).SurfaceAltitude - landedAltitude - 73; //15 / 30 / 50
 
                 double g = 9.81;
                 double maxDecelCentral = ((firstStage.Parts.WithTag("MainCentral")[0].Engine.AvailableThrust) / firstStage.Mass) - g;
-                double stopDistCentral = Math.Pow(Math.Abs(verticalSpeed), 2) / (2 * maxDecelCentral);
+                double stopDistCentral = Math.Pow(Math.Abs(verticalSpeed), 2) / (1.8/*2*/ * maxDecelCentral);
                 double impactTime = trueRadar / Math.Abs(verticalSpeed);
 
-                if (trueRadar /*- ((1 * trueRadar) / 100)*/ - (firstStage.Flight(firstStage.SurfaceReferenceFrame).TrueAirSpeed * 1.25) <= stopDistCentral && suicideBurnText == false)
+                if (trueRadar /*- ((1 * trueRadar) / 100)*/ - (firstStage.Flight(firstStage.SurfaceReferenceFrame).TrueAirSpeed * 1.25 /*1.25*/) <= stopDistCentral && suicideBurnText == false)
                 {
-                    Console.WriteLine("FIRST STAGE : Landing Burn started.");
+                    Console.WriteLine("FIRST STAGE : Landing Burn started." + rocketBody);
                     suicideBurnText = true;
 
                     throt = 1;
@@ -404,16 +425,16 @@ namespace SpaceXComputer
                     firstStage.Control.Gear = true;
                 }
 
-                if (firstStage.Flight(firstStage.Orbit.Body.ReferenceFrame).VerticalSpeed > -5 && suicideBurnText == true)
+                if (firstStage.Flight(firstStage.Orbit.Body.ReferenceFrame).VerticalSpeed > -15 && suicideBurnText == true)
                 {
-                    throt = ThrottleToTWR(0.85f);
+                    throt = ThrottleToTWR(0.98f);
                 }
 
                 if (firstStage.Flight(firstStage.Orbit.Body.ReferenceFrame).VerticalSpeed > -0.1 && suicideBurn == false)
                 {
                     firstStage.Control.Throttle = 0;
                     throt = 0;
-                    Console.WriteLine("firstStage has landed.");
+                    Console.WriteLine("firstStage has landed." + rocketBody);
                     suicideBurn = true;
 
                     double LandLat = firstStage.Flight(firstStage.SurfaceReferenceFrame).Latitude;

@@ -21,6 +21,7 @@ namespace SpaceXComputer
 
         public static void Main()
         {
+            Console.WriteLine("Computer in startup");
             new Startup();
         }
 
@@ -32,10 +33,25 @@ namespace SpaceXComputer
             flightInfo = new FlightInfo();
             //connection = new Connection(address: IPAddress.Parse("127.0.0.1"), rpcPort: 50000, streamPort: 50001); // Tester ::1
             Console.WriteLine("Falcon is in startup");
-            connection = new Connection(address: IPAddress.Parse("192.168.1.88"), rpcPort: 60000, streamPort: 60001);
+
+            int conNumber = 1;
+            while (connection == null)
+            {
+                Console.WriteLine($"Connection tentative {conNumber}");
+                conNumber += 1;
+
+                try
+                {
+                    connection = new Connection(name: "UbuntuComputer", address: IPAddress.Parse("192.168.1.88"), rpcPort: 50000, streamPort: 50001);
+                }
+                catch
+                {
+                    Thread.Sleep(1000);
+                }
+            }
 
             //connectionFirstStage = new Connection(address: IPAddress.Parse("192.168.1.88"), rpcPort: 50000, streamPort: 50001);
-
+           
             connectionFirstStage = connection;
 
             Console.WriteLine("Program startup in 5 seconds...");

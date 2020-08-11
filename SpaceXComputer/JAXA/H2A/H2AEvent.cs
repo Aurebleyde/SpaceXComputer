@@ -41,7 +41,7 @@ namespace SpaceXComputer
             Console.WriteLine("H2A is in startup.");
 
             Thread Log = new Thread(LogDoc);
-            Log.Start();
+            //Log.Start();
 
             Thread.Sleep(2000);
 
@@ -98,8 +98,8 @@ namespace SpaceXComputer
                 {
                     H2A.Parts.WithTag("Booster")[0].Engine.Active = true;
                     H2A.Parts.WithTag("Booster")[1].Engine.Active = true;
-                    /*H2A.Parts.WithTag("Booster")[2].Engine.Active = true;
-                    H2A.Parts.WithTag("Booster")[3].Engine.Active = true;*/
+                    H2A.Parts.WithTag("Booster")[2].Engine.Active = true;
+                    H2A.Parts.WithTag("Booster")[3].Engine.Active = true; 
                 }
                 catch
                 {
@@ -114,7 +114,7 @@ namespace SpaceXComputer
                     clamp.Release();
                 }
                 Console.WriteLine("HII-A : Liftoff.");
-                sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Liftoff");
+                //sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Liftoff");
             }
         }
 
@@ -124,7 +124,7 @@ namespace SpaceXComputer
             bool Booster = false;
             double FirstTWR = H2A.Parts.WithTag("First")[0].Engine.AvailableThrust / H2A.Mass;
 
-            sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Gravity turn start");
+            //sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Gravity turn start");
 
             while (true)
             {
@@ -144,7 +144,7 @@ namespace SpaceXComputer
 
                 H2A.AutoPilot.TargetPitch = Convert.ToSingle(Pitch);
                 H2A.AutoPilot.TargetHeading = Startup.GetInstance().GetFlightInfo().getHead();
-                H2A.AutoPilot.TargetRoll = 90;
+                H2A.AutoPilot.TargetRoll = 0;
 
                 if (H2A.AutoPilot.TargetPitch <= 35)
                 {
@@ -155,20 +155,22 @@ namespace SpaceXComputer
 
             H2A.AutoPilot.TargetPitch = 40;
             Console.WriteLine("HII-A : Gravity Turn ended.");
-            sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Gravity turn end");
+            //sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Gravity turn end");
         }
 
         public void BoosterSeparation()
         {
             //double TWR = H2A.Thrust / H2A.Mass;
-            while (H2A.Thrust >= 1500000)
+            while (H2A.Parts.WithTag("Booster")[0].Engine.Thrust >= 300)
             {
                 //TWR = H2A.Thrust / H2A.Mass;
             }
+
+            Thread.Sleep(2000);
             H2A.Control.ToggleActionGroup(4);
             BoosterSep = true;
             Console.WriteLine("HII-A : Booster Separation.");
-            sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Booster separation");
+            //sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Booster separation");
         }
 
         public void FairingSep()
@@ -176,7 +178,7 @@ namespace SpaceXComputer
             while (H2A.Flight(H2A.SurfaceReferenceFrame).MeanAltitude <= 100000) { }
             H2A.Control.ToggleActionGroup(5);
             Console.WriteLine("HII-A : Fairing Separation.");
-            sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Fairing Separation");
+            //sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Fairing Separation");
         }
 
         public void StageSep()
@@ -186,7 +188,7 @@ namespace SpaceXComputer
             H2A.Parts.WithTag("Decoupler")[0].Decoupler.Decouple();
             
             Console.WriteLine("HII-A : First Stage Separation.");
-            sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : First stage separation");
+            //sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : First stage separation");
         }
 
         public void SecondEngineStartup()
@@ -194,7 +196,7 @@ namespace SpaceXComputer
             H2A.Parts.WithTag("Second")[0].Engine.Active = true;
             H2A.Control.Throttle = 1;
             Console.WriteLine("HII-A : Second Engine Startup.");
-            sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Second engine startup");
+            //sw.WriteLine($"[{Hour(connection.SpaceCenter().UT)}] : Second engine startup");
 
             H2A.Control.ToggleActionGroup(6);
         }

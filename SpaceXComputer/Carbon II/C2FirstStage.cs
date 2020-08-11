@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using KRPC.Client;
 using KRPC.Client.Services.KRPC;
 using KRPC.Client.Services.SpaceCenter;
-using UnityEngine;
-using UnityEngineInternal;
+//using UnityEngine;
+//using UnityEngineInternal;
 
 namespace SpaceXComputer
 {

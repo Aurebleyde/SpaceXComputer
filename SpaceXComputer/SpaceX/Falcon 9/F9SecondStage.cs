@@ -62,7 +62,7 @@ namespace SpaceXComputer
                 }
                 else if (Startup.GetInstance().GetFlightInfo().getDragon() == false)
                 {
-                    if (secondStage.Flight(null).MeanAltitude > 90000)
+                    if (secondStage.Flight(null).MeanAltitude > 100000)
                     {
                         secondStage.Control.ToggleActionGroup(5);
                         Console.WriteLine("STAGE 2 : Fairing separation.");

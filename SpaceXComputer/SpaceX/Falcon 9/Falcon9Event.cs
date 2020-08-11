@@ -42,8 +42,8 @@ namespace SpaceXComputer
             Console.WriteLine("First Stage accisition signal.");
 
             Console.WriteLine("Loading...");
-            Task.Run(LoadSupervisor);
-            while (FalconSupervisor.Instance == null) { Thread.Sleep(1000); }
+            //Task.Run(LoadSupervisor);
+            //while (FalconSupervisor.Instance == null) { Thread.Sleep(1000); }
             Console.WriteLine("Loaded !");
 
             Task.Run(() => { 
@@ -261,7 +261,7 @@ namespace SpaceXComputer
 
             foreach (Vessel vesselTargetFirst in connectionFirstStage.SpaceCenter().Vessels)
             {
-                if (vesselTargetFirst.Name.Contains("Falcon 9.1") && vesselTargetFirst.Name.Contains("NRS-F") && vesselTargetFirst.Type.Equals(VesselType.Probe))
+                if (vesselTargetFirst.Name.Contains("Falcon 9") && vesselTargetFirst.Name.Contains("") && vesselTargetFirst.Type.Equals(VesselType.Probe))
                 {
                     secondStage = new F9SecondStage(vessel, RocketBody.F9_SECOND_STAGE);
                     firstStage.secondStage = secondStage;
@@ -300,7 +300,7 @@ namespace SpaceXComputer
             }*/
             foreach (Vessel vesselTargetFirst in connectionFirstStage.SpaceCenter().Vessels)
             {
-                if (vesselTargetFirst.Name.Contains("Falcon 9.1") && vesselTargetFirst.Name.Contains("Sonde") && vesselTargetFirst.Type.Equals(VesselType.Probe))
+                if (vesselTargetFirst.Name.Contains("Falcon 9") && vesselTargetFirst.Name.Contains("Sonde") && vesselTargetFirst.Type.Equals(VesselType.Probe))
                 {
                     firstStage.firstStage = vesselTargetFirst;
                     firstStage.firstStage.Name = "F9 First Stage";
@@ -374,7 +374,7 @@ namespace SpaceXComputer
                 TWR = Ft / Fw;
 
                 var difSup = ((90 * TWR) / TWRstart);
-                double dif = (difSup - 90) / 2.9; //1.8 ASDS //2.9 RTLS
+                double dif = (difSup - 90) / 3; //1.8 ASDS //3 RTLS
                 float dif2 = Convert.ToSingle(dif);
                 pit = 90 - dif2;
                 firstStage.firstStage.AutoPilot.TargetPitch = pit;
@@ -401,7 +401,7 @@ namespace SpaceXComputer
                 //var percentage = (33.5 * (9336.4 * 3 + 4668.2)) / 100;
                 firstStage.firstStage.Control.Throttle = 1;
 
-                if (firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed > 1600 /*RTLS = > 1600 | ASDS = > 2050*/ /*firstStage.firstStage.Thrust < 50*/)
+                if (firstStage.firstStage.Flight(firstStage.firstStage.SurfaceReferenceFrame).TrueAirSpeed > 1320 /*RTLS = > 1320 | ASDS = > 1800*/ /*firstStage.firstStage.Thrust < 50*/)
                 {
                     Console.WriteLine("FALCON 9 : MECO.");
                     firstStage.firstStage.Control.Throttle = 0;

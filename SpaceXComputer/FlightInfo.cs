@@ -26,18 +26,18 @@ namespace SpaceXComputer
         protected Boolean Orion = false;
         protected Boolean multiPhaseDragon = false;
         protected Boolean Hyperloop = false;
-        protected Double maxAltitude = 45000;
-        protected Double apoapsisTarget = 35786000;
-        protected Double periapsisTarget = 600000;
+        protected Double maxAltitude = 20000;
+        protected Double apoapsisTarget = 35784000;
+        protected Double periapsisTarget = 250000;
         protected String landing = "RTLS"; //RTLS for LZ and ASDS for drone ship
-        protected String LZ = "LZ-2"; //LZ-1/LZ-2/LZ-4/OCISLY/FHLZ/FHOCISLY
+        protected String LZ = "LZ-1"; //LZ-1/LZ-2/LZ-4/OCISLY/FHLZ/FHOCISLY
 
         //protected Double semiMajorAxis = ((Startup.GetInstance().GetFlightInfo().getApoapsisTarget() + 600000) + (Startup.GetInstance().GetFlightInfo().getPeriapsisTarget() + 600000)) / 2;
         protected Double dragonCargoApoapsisTarget = 900000;
         protected Double dragonCargoPreiapsisTarget = 900000;
         protected float inclination = 0;
-        protected float head = 90/* + 43*/;
-        protected float headDesorbitation = 268;
+        protected float head = 90 + 0;
+        protected float headDesorbitation = 270 - 0;
 
         protected string time = "11h48:00";
 
